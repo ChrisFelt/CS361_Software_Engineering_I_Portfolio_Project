@@ -66,33 +66,83 @@ class Collection:
 
 
 def authenticate(name, pwd):
-
+    """checks user name/pwd against existing credentials"""
     # check if user credential txt file exists
     file = Path(name + ".txt")
     if file.is_file():
-        # read file
-        read_line = file.readline()
-        file.close()
+        # open and read file
+        with open(name + '.txt', 'r') as in_file:
+            credential = json.load(in_file)
+
         # check if pwd matches file contents
-        if read_line == pwd:
+        if str(credential[name]) == pwd:
             return True
 
     return False
 
 
+def print_divide():
+    """prints a screen divide"""
+    print("\n"
+          "\n---------------------------------------------"
+          "\n")
+
+
+def login():
+    """login screen routine"""
+
+    print_divide()
+
+    while True:
+
+        user_input = input("\n1. Enter Username"
+                           "\n2. Return to previous screen"
+                           "\n-> ")
+
+        # attempt login
+        if user_input == "1":
+            name = input("\n\nUsername -> ")
+            pwd = input("\nPassword -> ")
+
+            # authenticate input
+            if authenticate(name, pwd) is True:
+                # access account
+                print("\n\nSuccess! Opening your account, " + name + ".")
+                account(name, pwd)
+
+            else:
+                # retry
+                print("\nLogin failed. Please enter a valid Username and password.\n")
+                continue
+
+            # if return from successful account login, exit login loop
+            break
+
+        else:
+            # go back to main screen
+            print_divide()
+            return
+
+
+def account(name, pwd):
+    pass
+
+
 if __name__ == '__main__':
 
-    user_input = input("Welcome to FlashCard! Please choose an option: "
-                       "\n1. Login"
-                       "\n2. Create new account"
-                       "\n3. Help options"
-                       "\n-> ")
+    while True:
 
-    if user_input == 1:
-        pass
+        user_input = input("Welcome to FlashCard! Please choose an option: "
+                           "\n1. Login"
+                           "\n2. Create new account"
+                           "\n3. Help options"
+                           "\n-> ")
 
-    elif user_input == 2:
-        pass
+        if user_input == "1":
+            login()
 
-    else:
-        pass
+        elif user_input == "2":
+            pass
+
+        else:
+            pass

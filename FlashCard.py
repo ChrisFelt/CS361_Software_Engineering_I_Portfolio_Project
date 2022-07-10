@@ -16,8 +16,8 @@ class User:
         data_file = Path(name + ".json")
         if data_file.is_file():
             # open file and load into data
-            with open(name + '.json', 'r') as infile:
-                self._data = json.load(infile)[0]
+            with open(name + '.json', 'r') as in_file:
+                self._data = json.load(in_file)
 
         # dictionary defaults to None
         else:
@@ -51,6 +51,11 @@ class User:
             input("Press any key to continue...")
             print(back)
 
+    def save_cards(self):
+
+        with open(self._name + '.json', 'w') as out_file:
+            out_file.write(json.dumps(self._data))
+
 
 class Card:
     pass
@@ -60,7 +65,7 @@ class Collection:
     pass
 
 
-def login(name, pwd):
+def authenticate(name, pwd):
 
     # check if user credential txt file exists
     file = Path(name + ".txt")
@@ -76,4 +81,18 @@ def login(name, pwd):
 
 
 if __name__ == '__main__':
-    pass
+
+    user_input = input("Welcome to FlashCard! Please choose an option: "
+                       "\n1. Login"
+                       "\n2. Create new account"
+                       "\n3. Help options"
+                       "\n-> ")
+
+    if user_input == 1:
+        pass
+
+    elif user_input == 2:
+        pass
+
+    else:
+        pass

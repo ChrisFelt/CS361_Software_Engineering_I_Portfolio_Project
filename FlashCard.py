@@ -126,7 +126,6 @@ def print_divide():
 
 def login():
     """login screen routine"""
-
     while True:
         print_divide()
         # prompt user
@@ -154,11 +153,13 @@ def login():
             # if return from successful account login, exit login loop
             break
 
+        # return to previous screen
         if login_input == "2":
             # go back to main screen
             print("\nReturning to previous screen.")
             return
 
+        # invalid entry
         else:
             print("Error! Please enter a valid input.")
             continue
@@ -246,6 +247,7 @@ def account(name, pwd):
             # return to previous menu
             break
 
+        # help menu/invalid entry
         else:
             print("\nWelcome to user account help.")
             print("To navigate, please enter the number of the choice you wish after the -> symbol.")
@@ -309,7 +311,7 @@ def create_account():
         elif create_input == "2":
             return
 
-        # invalid input
+        # help menu/invalid input
         else:
             print("\nWelcome to account creation help.")
             print("To navigate, please enter the number of the choice you wish after the -> symbol.")
@@ -320,9 +322,11 @@ def create_account():
 
 if __name__ == '__main__':
 
+    # initialize app
     while True:
         print_divide()
 
+        # main menu prompt
         user_input = input("Welcome to FlashCard! Please choose an option: "
                            "\n1. Login"
                            "\n2. Create new account"

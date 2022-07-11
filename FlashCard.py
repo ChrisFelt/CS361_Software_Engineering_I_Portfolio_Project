@@ -46,6 +46,19 @@ class User:
         else:
             self._data[front] = back
 
+    def show_cards(self):
+        """prints a numbered list of all flash cards"""
+        i = 1
+        # print list
+        for front, back in sorted(self._data.items()):
+            print(str(i) + ". " + front)
+
+            # screen break every 10 cards
+            if i % 10 == 0:
+                input("\nPress any key to continue...\n")
+
+            i += 1
+
     def print_front(self):
         """prints flash cards in self._data starting from with the front"""
         # print front nad back of card in order sorted by front
@@ -53,9 +66,9 @@ class User:
         for front, back in sorted(self._data.items()):
             print("\nShowing flash card #" + str(i) + ".")
             print("Front: " + front)
-            input("Press any key to continue...")
+            input("Press any key to see back...")
             print("Back: " + back)
-            input("Press any key to continue...")
+            input("Press any key to see next card...")
 
             i += 1
 
@@ -113,9 +126,9 @@ def print_divide():
 
 def login():
     """login screen routine"""
-    print_divide()
 
     while True:
+        print_divide()
         # prompt user
         login_input = input("Please select an option: "
                             "\n1. Enter Username"
@@ -135,16 +148,20 @@ def login():
 
             else:
                 # retry
-                print("\nLogin failed. Please enter a valid Username and password.\n")
+                print("\nLogin failed. Please enter a valid Username and password.")
                 continue
 
             # if return from successful account login, exit login loop
             break
 
-        else:
+        if login_input == "2":
             # go back to main screen
-            print_divide()
+            print("\nReturning to previous screen.")
             return
+
+        else:
+            print("Error! Please enter a valid input.")
+            continue
 
 
 def account(name, pwd):
@@ -165,13 +182,21 @@ def account(name, pwd):
 
         # display flash card
         if account_input == "1":
-
+            # if user has no saved flash cards, notify and return to menu
             if user.no_cards():
                 print("\nYou currently have no cards to view! Please make a new card from your account menu.")
                 input("Press any key to return to the previous screen...")
 
+            # show user's flash cards
             else:
+                print("\nShowing a list of all of your cards: ")
+                # print list
+                user.show_cards()
+                # iterate through each card
                 user.print_front()
+
+                # notify user end of list has been reached
+                input("\nNo more cards to show. Press any key to return to account...")
 
         # create flash card
         elif account_input == "2":

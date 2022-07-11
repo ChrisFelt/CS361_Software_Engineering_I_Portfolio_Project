@@ -5,10 +5,11 @@
 
 import json
 from pathlib import Path
+import os
 
 
 class User:
-
+    """Represents a user, with credentials and flash cards."""
     # initialize data members
     def __init__(self, name, pwd):
 
@@ -36,6 +37,7 @@ class User:
                 file.write(json.dumps(self._cred))
 
     def add_card(self, front, back):
+        """adds a flash card entry to user._data"""
         # create dictionary if no cards
         if self._data is None:
             self._data = {front: back}
@@ -45,16 +47,34 @@ class User:
             self._data[front] = back
 
     def print_front(self):
+        """prints flash cards in self._data starting from with the front"""
         # print front nad back of card in order sorted by front
         for front, back in sorted(self._data.items()):
-            print(front)
+            print("\nFront: " + front)
             input("Press any key to continue...")
-            print(back)
+            print("Back: " + back)
+            input("Press any key to continue...")
 
     def save_cards(self):
-
+        """saves self.data contents as a json to same directory"""
         with open(self._name + '.json', 'w') as out_file:
             out_file.write(json.dumps(self._data))
+
+    def delete(self):
+        """deletes cards from self._data and from hard drive"""
+        # delete data
+        self._data = {}
+        # delete file if it exists
+        data_file = Path(self._name + ".json")
+        if data_file.is_file():
+            os.remove(self._name + '.json')
+
+    def no_cards(self):
+        """returns true if user has no cards, otherwise false"""
+        if self._data == {}:
+            return True
+        else:
+            return False
 
 
 class Card:
@@ -90,17 +110,16 @@ def print_divide():
 
 def login():
     """login screen routine"""
-
     print_divide()
 
     while True:
-
-        user_input = input("\n1. Enter Username"
-                           "\n2. Return to previous screen"
-                           "\n-> ")
+        # prompt user
+        login_input = input("\n1. Enter Username"
+                            "\n2. Return to previous screen"
+                            "\n-> ")
 
         # attempt login
-        if user_input == "1":
+        if login_input == "1":
             name = input("\n\nUsername -> ")
             pwd = input("\nPassword -> ")
 
@@ -125,7 +144,85 @@ def login():
 
 
 def account(name, pwd):
-    pass
+    """account screen routine"""
+
+    # create user object with credentials
+    user = User(name, pwd)
+
+    while True:
+        print_divide()
+        # prompt user
+        account_input = input("Welcome to your account! Please enter the number of the option you wish below."
+                              "\n1. View your flash cards"
+                              "\n2. Create new flash card - customizable in just two steps!"
+                              "\n3. Edit/delete your flash cards"
+                              "\n4. Logoff"
+                              "\n5. Help options"
+                              "\n-> ")
+
+        # display flash card
+        if account_input == "1":
+
+            if user.no_cards():
+                print("\nYou currently have no cards to view! Please make a new card from your account menu.")
+
+            else:
+                user.print_front()
+
+        # create flash card
+        elif account_input == "2":
+            # prompt user for front and back
+            front = input("Please enter text for front of card: ")
+            back = input("Please enter text for back of card: ")
+
+            # confirm card
+            print("\nYou have entered front: " + front + "\n And back: " + back)
+            finalize = input("\nSave this card? Y/N: ")
+
+            # save card
+            if finalize.lower() == "y":
+                print("Card saved!")
+                user.add_card(front, back)
+
+            # do nothing
+            elif finalize.lower() == "n":
+                print("Card not saved.")
+                continue
+
+            else:
+                print("Invalid entry. Returning to account.")
+
+        # delete ALL cards
+        elif account_input == "3":
+            # confirm choice to delete
+            delete = input("Delete your card(s)? Y/N: ")
+
+            # delete all cards in user object and hdd flash card file associated with user credentials
+            if delete.lower() == "y":
+                print("Cards deleted!")
+                user.delete()
+
+            # do nothing
+            elif delete.lower() == "n":
+                print("Cards will not be deleted.")
+                continue
+
+            else:
+                print("Invalid entry. Returning to account.")
+
+        # logoff user
+        elif account_input == "4":
+            # first save data to hdd
+            user.save_cards()
+            # return to previous menu
+            break
+
+        else:
+            print("Welcome to user account help.")
+            print("To navigate, please enter the number of the choice you wish after the -> symbol.")
+            print("Any other key entry will bring you to the help menu.")
+            input("To return to your account menu, press any key...")
+            continue
 
 
 if __name__ == '__main__':

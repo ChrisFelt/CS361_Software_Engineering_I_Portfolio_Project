@@ -78,21 +78,23 @@ def randomize(request):
 if __name__ == '__main__':
 
     while True:
-        # check for message from client
-        message = socket.recv()
+        # check for request from client
+        request = socket.recv_json()
+
+        print("\nReceived request: [ %s ]" % request)
 
         # check status
-        status = message["status"]
+        status = request["status"]
 
         # randomize data if status is run
         if status == "run":
             print("\nReceived request from client, generating randomized RGB values...")
 
-            data = message["data"]
+            data = request["data"]
 
             res_rand = randomize(data)
 
-            response = message
+            response = request
 
             response["status"] = "done"
             response["data"] = res_rand

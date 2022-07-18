@@ -17,7 +17,11 @@ socket.bind("tcp://*:7077")
 
 
 def randomize(request):
-
+    """
+    Randomizes the RGB values of a list of embroidery layers.
+    :param request: A list of dictionaries with RGB key value pairs
+    :return: A list of dictionaries with new, randomized RGB key value pairs
+    """
     # create dictionary to track repeat colors
     repeat = {}
 
@@ -83,19 +87,34 @@ request = [
 
 print(randomize(request))
 
-# while True:
-    # check for message from client
-    # message = socket.recv()
+if __name__ == '__main__':
 
-    # status = message["status"]
+    while True:
+        # check for message from client
+        message = socket.recv()
 
-    # if status == "run":
-      #  print("\nReceived request from client, generating randomized RGB values...")
+        # check status
+        status = message["status"]
 
-       # data = message["data"]
+        # randomize data if status is run
+        if status == "run":
+            print("\nReceived request from client, generating randomized RGB values...")
 
-    # wait...
-    #time.sleep(1)
+            data = message["data"]
 
-    # respond to client
-    #socket.send_json({})
+            res_rand = randomize(data)
+
+            response = message
+
+            response["status"] = "done"
+            response["data"] = res_rand
+
+            print("\nRGB values randomized. Waiting to send response JSON...")
+
+            # wait...
+            time.sleep(1)
+
+            # respond to client
+            socket.send_json(response)
+
+            print("\nResponse sent to client!")

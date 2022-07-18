@@ -46,6 +46,16 @@ class User:
         else:
             self._data[front] = back
 
+    def add_card_coll(self, collection, front, back):
+        """adds a flash card entry to given collection in user._data"""
+        # create dictionary if no cards
+        if self._data == {}:
+            self._data = {collection: {front: back}}
+
+        # add card to dictionary
+        else:
+            self._data[collection][front] = back
+
     def show_cards(self):
         """prints a numbered list of all flash cards"""
         i = 1
@@ -174,8 +184,8 @@ def account(name, pwd):
         print_divide()
         # prompt user
         account_input = input("Welcome to your FlashCard account! Please enter the number of an option below:"
-                              "\n1. View your flash cards"
-                              "\n2. Create new flash card - customizable in just two steps!"
+                              "\n1. View your flash cards - cycles through each card"
+                              "\n2. Create new flash card - now customizable in just two steps!"
                               "\n3. Edit/delete your flash cards"
                               "\n4. Logoff"
                               "\n5. Help options"

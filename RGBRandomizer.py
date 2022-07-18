@@ -77,11 +77,12 @@ def randomize(request):
 
 if __name__ == '__main__':
 
+    # wait for request...
     while True:
         # check for request from client
         request = socket.recv_json()
 
-        print("\nReceived request: [ %s ]" % request)
+        print("\nReceived request:  \n%s " % request)
 
         # check status
         status = request["status"]

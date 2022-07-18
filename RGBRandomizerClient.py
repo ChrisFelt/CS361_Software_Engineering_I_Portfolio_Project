@@ -34,7 +34,7 @@ socket.send_json(request)
 
 # get and print response
 response = socket.recv_json()
-print("\nReceived reply: [ %s ]" % response)
+print("\nReceived reply:  \n%s " % response)
 
 
 

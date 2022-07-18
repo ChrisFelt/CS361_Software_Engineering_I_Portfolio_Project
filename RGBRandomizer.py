@@ -50,7 +50,7 @@ def randomize(request):
             while rand_rgb == rgb or rand_rgb in res_unique:
                 rand_rgb = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
-            # add unique RGB value into res_unique
+            # add unique rand_rgb RGB value into res_unique
             res_unique.add(rand_rgb)
 
             # add RGB value to response list

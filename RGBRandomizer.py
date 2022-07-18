@@ -75,18 +75,6 @@ def randomize(request):
     return response
 
 
-request = [
-        {"r": 180, "g": 180, "b": 180},
-        {"r": 0, "g": 255, "b": 50},
-        {"r": 180, "g": 180, "b": 180},
-        {"r": 30, "g": 55, "b": 0},
-        {"r": 0, "g": 235, "b": 50},
-        {"r": 180, "g": 180, "b": 180},
-        {"r": 30, "g": 55, "b": 0},
-    ]
-
-print(randomize(request))
-
 if __name__ == '__main__':
 
     while True:

@@ -99,5 +99,4 @@ UML Sequence Diagram:
        | |                                   
        | |                                   
        | |                                   
-       |_|                                   
-        X
+       | |

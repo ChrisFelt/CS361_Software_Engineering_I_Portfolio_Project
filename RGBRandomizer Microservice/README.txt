@@ -65,9 +65,9 @@ UML Sequence Diagram:
        | |                                |__| |
        | |                                   | |
        | |                                   | |
-       | |                                   | |
        | |     socket.send_json(REQUEST)     | |
        | |  <<-----------------------------  | |
+       | |                                   | |
        | |                                   | |
        | |   randomize()                     | |
        | |  --------------                   | |
@@ -78,8 +78,10 @@ UML Sequence Diagram:
        | |  |                                | |
        | |__|                                | |
        | |                                   | |
+       | |                                   | |
        | |   socket.send_json(RESPONSE)      | |
        | |  ----------------------------->>  | |
+       | |                                   | |
        | |                                   | |
        | |                   finish_work()   | |
        | |                   --------------  | |

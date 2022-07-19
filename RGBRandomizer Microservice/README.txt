@@ -49,7 +49,7 @@ UML Sequence Diagram:
 
 ------------------                   ------------------     
 |                |                   |   Embroidery   |
-| RGB Randomizer |                   |     Pattern    |       
+| RGB Randomizer |                   |     Pattern    |
 |                |                   |     Client     |
 ------------------                   ------------------
         |                                     |

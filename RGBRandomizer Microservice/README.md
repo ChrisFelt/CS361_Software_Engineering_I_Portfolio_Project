@@ -1,6 +1,6 @@
-Communication Contract for RGBRandomizer Microservice
-CS 361
-Christopher Felt
+Communication Contract for RGBRandomizer Microservice  
+CS 361  
+Christopher Felt  
 
 -----------------------------------------------------
 How to REQUEST data:

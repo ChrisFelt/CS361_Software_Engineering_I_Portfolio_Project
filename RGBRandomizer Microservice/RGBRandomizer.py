@@ -100,7 +100,7 @@ if __name__ == '__main__':
             response["status"] = "done"
             response["data"] = res_rand
 
-            print("\nRGB values randomized. Waiting to send response JSON...")
+            print("\nSuccess! Waiting to send response JSON...")
 
             # wait...
             time.sleep(1)

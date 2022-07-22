@@ -6,6 +6,7 @@
 import json
 from pathlib import Path
 import os
+import zmq
 
 
 class User:
@@ -100,7 +101,7 @@ class User:
         for front, back in sorted(self._data[list(self._data.keys())[pos]].items()):
             print("\nShowing flash card #" + str(i) + ".")
             print("Front: " + front)
-            input("Press any key to see back...")
+            input("----------------")
             print("Back: " + back)
             input("Press any key to see next card...")
 
@@ -127,13 +128,44 @@ class User:
         else:
             return False
 
+    def search(self, term):
+        """search self._data for cards that match term"""
+        context = zmq.Context()
 
-class Card:
-    pass
+        # connect to server with socket
+        socket = context.socket(zmq.REQ)
+        socket.connect("tcp://localhost:7077")
 
+        # send flash card JSON to search microservice
+        socket.send_json(self._data)
 
-class Collection:
-    pass
+        # get microservice response
+        response = socket.recv_json()
+
+        # check if search was successful
+        if response["status"] != "done":
+            print("\nSearch failed. Please try again.")
+
+        else:
+            # get search results from response
+            result = response["data"]
+
+            # if no match found, notify user
+            if result == {}:
+                print("\nNo matches found for " + term + ".")
+
+            else:
+                print("\nFound the following matches: ")
+                i = 1
+                # print list
+                for front, back in sorted(self._data.items()):
+                    print(str(i) + ". " + front + "  ||  " + back)
+
+                    # screen break every 10 cards
+                    if i % 10 == 0:
+                        input("\nPress any key to continue...\n")
+
+                    i += 1
 
 
 def authenticate(name, pwd):
@@ -269,6 +301,7 @@ def account(name, pwd):
                         continue
 
                     else:
+                        print("\nYour collections: ")
                         user.show_coll()
                         pos = input("\nSelect a collection to add the card to: ")
 

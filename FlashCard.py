@@ -231,6 +231,83 @@ def login():
             continue
 
 
+def create_card(user):
+    """card creation routine: prompts user to create and add cards to collections."""
+
+    # create flash card routine
+    while True:
+        card_input = input("\nWelcome to card creation! Please select an option: "
+                           "\n1. Create new collection"
+                           "\n2. Add card to collection"
+                           "\n3. Return to previous screen"
+                           "\n-> ")
+
+        if card_input == "1":
+            # get collection name and add an empty collection key to the user's collections
+            coll_name = input("\nEnter collection name: ")
+
+            # confirm collection
+            print("\nYou have entered: " + coll_name)
+            finalize = input("\nSave this collection? Y/N: ")
+
+            # save collection
+            if finalize.lower() == "y":
+                user.add_coll(coll_name)
+                input("Collection added! Press any key to return...")
+
+            # do nothing
+            elif finalize.lower() == "n":
+                print("Collection not saved.")
+                continue
+
+        elif card_input == "2":
+            # if user has no collections, raise error
+            if user.no_cards():
+                print("\nYou have no collections! Make a collection first.")
+                continue
+
+            else:
+                print("\nYour collections: ")
+                user.show_coll()
+                pos = input("\nSelect a collection to add the card to: ")
+
+                # if user entry is valid, proceed to card creation
+                if pos.isdigit() and user.valid_index(pos):
+
+                    # prompt user for front and back
+                    front = input("\nPlease enter text for front of card: ")
+                    back = input("Please enter text for back of card: ")
+
+                    # confirm card
+                    print("\nYou have entered front: " + front + "\nAnd back: " + back)
+                    finalize = input("\nSave this card? Y/N: ")
+
+                    # save card
+                    if finalize.lower() == "y":
+                        user.add_card(pos, front, back)
+                        print("Card saved!")
+
+                    # do nothing
+                    elif finalize.lower() == "n":
+                        print("Card not saved.")
+                        continue
+
+                    else:
+                        input("Invalid entry. Press any key to return to account...")
+
+                # invalid pos input
+                else:
+                    input("Invalid entry. Press any key to return to account...")
+
+        # return to previous screen
+        elif card_input == "3":
+            break
+
+        else:
+            input("\nInvalid input! Press any key to return...")
+            continue
+
+
 def account(name, pwd):
     """account page routine"""
     # create user object with credentials
@@ -279,67 +356,8 @@ def account(name, pwd):
 
         # create flash card
         elif account_input == "2":
-
-            # create flash card routine
-            while True:
-                card_input = input("\nWelcome to card creation! Please select an option: "
-                                   "\n1. Create new collection"
-                                   "\n2. Add card to collection"
-                                   "\n3. Return to previous screen"
-                                   "\n-> ")
-
-                if card_input == "1":
-                    # get collection name and add an empty collection key to the user's collections
-                    coll_name = input("\nEnter collection name: ")
-                    user.add_coll(coll_name)
-                    input("Collection added! Press any key to return...")
-
-                elif card_input == "2":
-                    # if user has no collections, raise error
-                    if user.no_cards():
-                        print("\nYou have no collections! Make a collection first.")
-                        continue
-
-                    else:
-                        print("\nYour collections: ")
-                        user.show_coll()
-                        pos = input("\nSelect a collection to add the card to: ")
-
-                        # if user entry is valid, proceed to card creation
-                        if pos.isdigit() and user.valid_index(pos):
-
-                            # prompt user for front and back
-                            front = input("\nPlease enter text for front of card: ")
-                            back = input("Please enter text for back of card: ")
-
-                            # confirm card
-                            print("\nYou have entered front: " + front + "\nAnd back: " + back)
-                            finalize = input("\nSave this card? Y/N: ")
-
-                            # save card
-                            if finalize.lower() == "y":
-                                user.add_card(pos, front, back)
-                                print("Card saved!")
-
-                            # do nothing
-                            elif finalize.lower() == "n":
-                                print("Card not saved.")
-                                continue
-
-                            else:
-                                input("Invalid entry. Press any key to return to account...")
-
-                        # invalid pos input
-                        else:
-                            input("Invalid entry. Press any key to return to account...")
-
-                # return to previous screen
-                elif card_input == "3":
-                    break
-
-                else:
-                    input("\nInvalid input! Press any key to return...")
-                    continue
+            # redirect to card creation
+            create_card(user)
 
         # delete ALL cards
         elif account_input == "3":

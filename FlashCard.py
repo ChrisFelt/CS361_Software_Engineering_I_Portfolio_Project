@@ -36,28 +36,23 @@ class User:
             with open(name + ".txt", 'w') as file:
                 file.write(json.dumps(self._cred))
 
-    def add_card(self, front, back):
-        """adds a flash card entry to user._data"""
-        # create dictionary if no cards
-        if self._data == {}:
-            self._data = {front: back}
-
-        # add card to dictionary
-        else:
-            self._data[front] = back
-
-    def add_card_coll(self, collection, front, back):
+    def add_card(self, pos, front, back):
         """adds a flash card entry to given collection in user._data"""
         # create dictionary if no cards
         if self._data == {}:
-            self._data = {collection: {front: back}}
+            self._data = {list(self._data.keys())[pos]: {front: back}}
 
         # add card to dictionary
         else:
-            self._data[collection][front] = back
+            self._data[list(self._data.keys())[pos]][front] = back
 
-    def show_cards(self):
-        """prints a numbered list of all flash cards"""
+    def add_coll(self, coll):
+        # adds an empty collection to self._data
+        self._data[coll] = {}
+
+    def show_coll(self):
+        """prints a numbered list of all collections"""
+
         i = 1
         # print list
         for front, back in sorted(self._data.items()):
@@ -69,11 +64,36 @@ class User:
 
             i += 1
 
-    def print_front(self):
-        """prints flash cards in self._data starting from with the front"""
-        # print front nad back of card in order sorted by front
+    def valid_index(self, pos):
+        """check if the given index falls within the dictionary"""
+        if 0 <= pos < len(self._data):
+            return True
+        else:
+            return False
+
+    def show_cards(self):
+        """given the index of a collection, prints a numbered list of all flash cards"""
+
+        # print collection
+        for j in range(len(self._data)):
+            print("Collection name: " + list(self._data.keys())[j])
+            i = 1
+            # print list
+            # list(dict_name.keys())[0] gets key at position 0
+            for front, back in sorted(self._data[list(self._data.keys())[j]].items()):
+                print("   " + str(i) + ". " + front)
+
+                # screen break every 10 cards
+                if i % 10 == 0:
+                    input("\nPress any key to continue...\n")
+
+                i += 1
+
+    def print_front(self, pos):
+        """given the index of a collection, prints flash cards in self._data in front -> back order"""
+        # print front and back of card in order sorted by front
         i = 1
-        for front, back in sorted(self._data.items()):
+        for front, back in sorted(list(self._data.keys())[pos].items()):
             print("\nShowing flash card #" + str(i) + ".")
             print("Front: " + front)
             input("Press any key to see back...")
@@ -184,7 +204,7 @@ def account(name, pwd):
         print_divide()
         # prompt user
         account_input = input("Welcome to your FlashCard account! Please enter the number of an option below:"
-                              "\n1. View your flash cards - cycles through each card"
+                              "\n1. View your flash cards - cycles through each card in a collection!"
                               "\n2. Create new flash card - now customizable in just two steps!"
                               "\n3. Edit/delete your flash cards"
                               "\n4. Logoff"
@@ -204,33 +224,73 @@ def account(name, pwd):
                 # print list
                 user.show_cards()
                 # iterate through each card
-                user.print_front()
+                # user.print_front()
 
                 # notify user end of list has been reached
                 input("\nNo more cards to show. Press any key to return to account...")
 
         # create flash card
         elif account_input == "2":
-            # prompt user for front and back
-            front = input("\nPlease enter text for front of card: ")
-            back = input("Please enter text for back of card: ")
 
-            # confirm card
-            print("\nYou have entered front: " + front + "\nAnd back: " + back)
-            finalize = input("\nSave this card? Y/N: ")
+            # create flash card routine
+            while True:
+                card_input = input("\nWelcome to card creation! Please select an option: "
+                                   "\n1. Create new collection"
+                                   "\n2. Add card to collection"
+                                   "\n3. Return to previous screen"
+                                   "\n-> ")
 
-            # save card
-            if finalize.lower() == "y":
-                print("Card saved!")
-                user.add_card(front, back)
+                if card_input == "1":
+                    # get collection name and add an empty collection key to the user's collections
+                    coll_name = input("\nEnter collection name: ")
+                    user.add_coll(coll_name)
+                    input("Collection added! Press any key to return...")
 
-            # do nothing
-            elif finalize.lower() == "n":
-                print("Card not saved.")
-                continue
+                elif card_input == "2":
+                    # if user has no collections, raise error
+                    if user.no_cards():
+                        print("\nYou have no collections! Make a collection first.")
+                        continue
 
-            else:
-                print("Invalid entry. Returning to account.")
+                    else:
+                        user.show_coll()
+                        pos = input("\nSelect a collection to add the card to: ")
+
+                        # if user entry is valid, proceed to card creation
+                        if pos.isdigit() and user.valid_index(int(pos) - 1):
+
+                            # prompt user for front and back
+                            front = input("\nPlease enter text for front of card: ")
+                            back = input("Please enter text for back of card: ")
+
+                            # confirm card
+                            print("\nYou have entered front: " + front + "\nAnd back: " + back)
+                            finalize = input("\nSave this card? Y/N: ")
+
+                            # save card
+                            if finalize.lower() == "y":
+                                user.add_card(int(pos) - 1, front, back)
+                                print("Card saved!")
+
+                            # do nothing
+                            elif finalize.lower() == "n":
+                                print("Card not saved.")
+                                continue
+
+                            else:
+                                print("Invalid entry. Returning to account.")
+
+                # return to previous screen
+                elif card_input == "3":
+                    break
+
+                else:
+                    input("\nInvalid input! Press any key to return...")
+                    continue
+
+            # if no collections, prompt user to create one
+            if user.no_cards():
+                print("\nYou have no collections! Start new collection?")
 
         # delete ALL cards
         elif account_input == "3":

@@ -38,6 +38,8 @@ class User:
 
     def add_card(self, pos, front, back):
         """adds a flash card entry to given collection in user._data"""
+        pos = int(pos) - 1
+
         # create dictionary if no cards
         if self._data == {}:
             self._data = {list(self._data.keys())[pos]: {front: back}}
@@ -66,6 +68,7 @@ class User:
 
     def valid_index(self, pos):
         """check if the given index falls within the dictionary"""
+        pos = int(pos) - 1
         if 0 <= pos < len(self._data):
             return True
         else:
@@ -76,12 +79,12 @@ class User:
 
         # print collection
         for j in range(len(self._data)):
-            print("Collection name: " + list(self._data.keys())[j])
+            print(str(j + 1) + ". " + list(self._data.keys())[j])
             i = 1
             # print list
             # list(dict_name.keys())[0] gets key at position 0
             for front, back in sorted(self._data[list(self._data.keys())[j]].items()):
-                print("   " + str(i) + ". " + front)
+                print("    " + front)
 
                 # screen break every 10 cards
                 if i % 10 == 0:
@@ -91,9 +94,10 @@ class User:
 
     def print_front(self, pos):
         """given the index of a collection, prints flash cards in self._data in front -> back order"""
+        pos = int(pos) - 1
         # print front and back of card in order sorted by front
         i = 1
-        for front, back in sorted(list(self._data.keys())[pos].items()):
+        for front, back in sorted(self._data[list(self._data.keys())[pos]].items()):
             print("\nShowing flash card #" + str(i) + ".")
             print("Front: " + front)
             input("Press any key to see back...")
@@ -220,11 +224,23 @@ def account(name, pwd):
 
             # show user's flash cards
             else:
-                print("\nShowing a list of all of your cards: ")
+                print("\nShowing a list of all of your collections and their cards: ")
                 # print list
                 user.show_cards()
                 # iterate through each card
                 # user.print_front()
+
+                # prompt user for collection to browse
+                pos = input("\nEnter the number of the collection you wish to browse: ")
+
+                # if valid entry, browse cards for the given collection
+                if pos.isdigit() and user.valid_index(pos):
+                    user.print_front(pos)
+
+                # otherwise return to account
+                else:
+                    input("Invalid entry! Press any key to return to account...")
+                    continue
 
                 # notify user end of list has been reached
                 input("\nNo more cards to show. Press any key to return to account...")
@@ -257,7 +273,7 @@ def account(name, pwd):
                         pos = input("\nSelect a collection to add the card to: ")
 
                         # if user entry is valid, proceed to card creation
-                        if pos.isdigit() and user.valid_index(int(pos) - 1):
+                        if pos.isdigit() and user.valid_index(pos):
 
                             # prompt user for front and back
                             front = input("\nPlease enter text for front of card: ")
@@ -269,7 +285,7 @@ def account(name, pwd):
 
                             # save card
                             if finalize.lower() == "y":
-                                user.add_card(int(pos) - 1, front, back)
+                                user.add_card(pos, front, back)
                                 print("Card saved!")
 
                             # do nothing
@@ -278,7 +294,11 @@ def account(name, pwd):
                                 continue
 
                             else:
-                                print("Invalid entry. Returning to account.")
+                                input("Invalid entry. Press any key to return to account...")
+
+                        # invalid pos input
+                        else:
+                            input("Invalid entry. Press any key to return to account...")
 
                 # return to previous screen
                 elif card_input == "3":
@@ -287,10 +307,6 @@ def account(name, pwd):
                 else:
                     input("\nInvalid input! Press any key to return...")
                     continue
-
-            # if no collections, prompt user to create one
-            if user.no_cards():
-                print("\nYou have no collections! Start new collection?")
 
         # delete ALL cards
         elif account_input == "3":

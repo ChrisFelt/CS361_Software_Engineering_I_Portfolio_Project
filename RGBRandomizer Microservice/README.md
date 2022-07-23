@@ -6,7 +6,7 @@ Christopher Felt
 Overview
 -----------------------------------------------------
 
-Welcome to the RGBRandomizer.py microservice README!  
+Welcome to the RGBRandomizer.py microservice README!
 
 This microservice receives RGB data in a JSON format, randomizes the RGB values while maintaining any repeated patterns, then returns the randomized values to the client as a JSON. The following requirements must be met to successfully use the RGBRandomizer:  
 
@@ -31,6 +31,9 @@ The microservice communicates on the local host at port 7077.
 
 Once started, the RGBRandomizer will run indefinitely until the program is terminated. 
 The microservice can receive and respond to any number of requests from the client while it is active.
+
+
+Finally, to start the microservice, simply run it from the command-line interface.
 
 -----------------------------------------------------
 How to REQUEST data:

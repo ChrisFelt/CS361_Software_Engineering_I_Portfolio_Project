@@ -14,7 +14,7 @@ This microservice receives RGB data in a JSON format, randomizes the RGB values 
 
 
 2. The "data" key value must contain a list of dictionaries containing RGB data. 
-   The exact format of the JSON is described in the 'How to REQUEST data' and 'How to RECEIVE data sections'.
+   The exact format of the JSON is described in the 'How to REQUEST data' and 'How to RECEIVE data' sections.
 
 
 3. All communication must take place via JSON file requests and responses. No other messages will be accepted or sent. 

@@ -6,13 +6,14 @@ Christopher Felt
 Overview
 -----------------------------------------------------
 
-Welcome to the RGBRandomizer.py README! 
+Welcome to the RGBRandomizer.py microservice README!  
+
 This microservice receives RGB data in a JSON format, randomizes the RGB values while maintaining any repeated patterns, then returns the randomized values to the client as a JSON. The following requirements must be met to successfully use the RGBRandomizer:  
 
 1. The request and response JSON files must be in a dictionary format with a "status" key, and a "data" key.
 
 
-2. They "data" key value must contain a list of dictionaries containing RGB data. 
+2. The "data" key value must contain a list of dictionaries containing RGB data. 
    The exact format of the JSON is described in the 'How to REQUEST data' and 'How to RECEIVE data sections'.
 
 

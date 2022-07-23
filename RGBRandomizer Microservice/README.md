@@ -3,6 +3,34 @@ CS 361
 Christopher Felt  
 
 -----------------------------------------------------
+Overview
+-----------------------------------------------------
+
+Welcome to the RGBRandomizer.py README! 
+This microservice receives RGB data in a JSON format, randomizes the RGB values while maintaining any repeated patterns, then returns the randomized values to the client as a JSON. The following requirements must be met to successfully use the RGBRandomizer:  
+
+1. The request and response JSON files must be in a dictionary format with a "status" key, and a "data" key.
+
+
+2. They "data" key value must contain a list of dictionaries containing RGB data. 
+   The exact format of the JSON is described in the How to REQUEST data and How to RECEIVE data sections.
+
+
+3. All communication must take place via JSON file requests and responses. No other messages will be accepted or sent. WARNING: if the request JSON does not match the prescribed format or contain a "status" key, the microservice will print a notification and skip it to wait for the next message.
+
+
+4. The microservice communicates with the client using ZeroMQ. 
+   As such, it will be necessary for the client to import the 'zmq' package for Python, or other appropriate package(s) if it is written in a different language.  
+   
+
+Other notes:
+
+The microservice communicates on the local host at port 7077.  
+
+Once started, the microservice will run indefinitely until the program is terminated. 
+It can receive any number of requests from the client while the program is active.
+
+-----------------------------------------------------
 How to REQUEST data:
 -----------------------------------------------------
 
@@ -20,7 +48,9 @@ The JSON sent in the request must be a dictionary in the following format:
 	]
 }
 ```
-Where the "status":"run" line tells the microservice to randomize the RGB combinations in the "data" section.
+Where the "status":"run" line tells the microservice to randomize the RGB combinations in the "data" section.  
+
+Note: if the vale of "status" is anything other than "run", the microservice will print a notification, ignore the message, and wait for the next message.
 
 
 -----------------------------------------------------
@@ -41,7 +71,9 @@ The JSON sent in the response will be a dictionary in the following format:
 	]
 }
 ```
-Where the "status":"done" line tells the client that the "data" section has been successfully randomized.
+Where the "status":"done" line tells the client that the "data" section has been successfully randomized.  
+
+Note: The response message will ONLY take this format. The microservice will not send any other messages to the client.
 
 
 -----------------------------------------------------

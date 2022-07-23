@@ -84,6 +84,16 @@ if __name__ == '__main__':
 
         print("\nReceived request:  \n%s " % request)
 
+        # reject message if format is unexpected
+        if type(request) is not dict:
+            print("Invalid message format. Waiting for next message.")
+            continue
+
+        # reject message of no status key present
+        elif "status" not in request:
+            print("Invalid message format. Waiting for next message.")
+            continue
+
         # check status
         status = request["status"]
 
@@ -109,3 +119,7 @@ if __name__ == '__main__':
             socket.send_json(response)
 
             print("\nResponse sent to client!")
+
+        # if status is not run, wait for next message
+        else:
+            print("Invalid status. Waiting for next message.")

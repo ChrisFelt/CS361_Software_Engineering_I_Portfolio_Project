@@ -13,10 +13,11 @@ This microservice receives RGB data in a JSON format, randomizes the RGB values 
 
 
 2. They "data" key value must contain a list of dictionaries containing RGB data. 
-   The exact format of the JSON is described in the How to REQUEST data and How to RECEIVE data sections.
+   The exact format of the JSON is described in the 'How to REQUEST data' and 'How to RECEIVE data sections'.
 
 
-3. All communication must take place via JSON file requests and responses. No other messages will be accepted or sent. WARNING: if the request JSON does not match the prescribed format or contain a "status" key, the microservice will print a notification and skip it to wait for the next message.
+3. All communication must take place via JSON file requests and responses. No other messages will be accepted or sent. 
+   WARNING: if the request JSON does not match the prescribed format or contain a "status" key, the microservice will print a notification, ignore the request, and wait for the next message.
 
 
 4. The microservice communicates with the client using ZeroMQ. 
@@ -27,8 +28,8 @@ Other notes:
 
 The microservice communicates on the local host at port 7077.  
 
-Once started, the microservice will run indefinitely until the program is terminated. 
-It can receive any number of requests from the client while the program is active.
+Once started, the RGBRandomizer will run indefinitely until the program is terminated. 
+The microservice can receive and respond to any number of requests from the client while it is active.
 
 -----------------------------------------------------
 How to REQUEST data:

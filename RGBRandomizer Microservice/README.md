@@ -51,7 +51,7 @@ The JSON sent in the request must be a dictionary in the following format:
 ```
 Where the "status":"run" line tells the microservice to randomize the RGB combinations in the "data" section.  
 
-Note: if the vale of "status" is anything other than "run", the microservice will print a notification, ignore the message, and wait for the next message.
+Note: if the value of "status" is anything other than "run", the microservice will print a notification, ignore the message, and wait for the next message.
 
 
 -----------------------------------------------------

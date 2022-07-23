@@ -11,6 +11,7 @@ import time
 import zmq
 import random
 
+# ZeroMQ socket
 context = zmq.Context()
 socket = context.socket(zmq.REP)
 socket.bind("tcp://*:7077")
@@ -112,8 +113,8 @@ if __name__ == '__main__':
 
             print("\nSuccess! Waiting to send response JSON...")
 
-            # wait...
-            time.sleep(1)
+            # wait... (used for testing)
+            # time.sleep(1)
 
             # respond to client
             socket.send_json(response)

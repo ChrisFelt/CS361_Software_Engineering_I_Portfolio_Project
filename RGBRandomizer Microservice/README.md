@@ -33,7 +33,7 @@ Once started, the RGBRandomizer will run indefinitely until the program is termi
 The microservice can receive and respond to any number of requests from the client while it is active.
 
 
-Finally, to start the microservice, simply run it from the command-line interface.
+Finally, to start the microservice, simply run RGBRandomizer.py from the command-line interface. No other files in this repository are necessary.
 
 -----------------------------------------------------
 How to REQUEST data:

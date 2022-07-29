@@ -8,6 +8,11 @@ from pathlib import Path
 import os
 import zmq
 
+# prepare socket for search microservice communication
+context = zmq.Context()
+socket = context.socket(zmq.REQ)
+socket.connect("tcp://localhost:7077")
+
 
 class User:
     """Represents a user, with credentials and flash cards."""
@@ -130,12 +135,6 @@ class User:
 
     def search(self, term):
         """search self._data for cards that match term"""
-        context = zmq.Context()
-
-        # connect to server with socket
-        socket = context.socket(zmq.REQ)
-        socket.connect("tcp://localhost:7077")
-
         # send flash card JSON to search microservice
         socket.send_json(self._data)
 
@@ -158,7 +157,7 @@ class User:
                 print("\nFound the following matches: ")
                 i = 1
                 # print list
-                for front, back in sorted(self._data.items()):
+                for front, back in sorted(response.items()):
                     print(str(i) + ". " + front + "  ||  " + back)
 
                     # screen break every 10 cards
@@ -205,14 +204,12 @@ def login():
             name = input("\nUsername -> ")
             pwd = input("Password -> ")
 
-            # authenticate input
+            # authenticate input and access account
             if authenticate(name, pwd) is True:
-                # access account
                 print("\nSuccess! Opening your account, " + name + ".")
                 account(name, pwd)
 
             else:
-                # retry
                 print("\nLogin failed. Please enter a valid Username and password.")
                 continue
 
@@ -221,7 +218,6 @@ def login():
 
         # return to previous screen
         if login_input == "2":
-            # go back to main screen
             print("\nReturning to previous screen.")
             return
 
@@ -287,7 +283,6 @@ def create_card(user):
                         user.add_card(pos, front, back)
                         print("Card saved!")
 
-                    # do nothing
                     elif finalize.lower() == "n":
                         print("Card not saved.")
                         continue
@@ -336,8 +331,6 @@ def account(name, pwd):
                 print("\nShowing a list of all of your collections and their cards: ")
                 # print list
                 user.show_cards()
-                # iterate through each card
-                # user.print_front()
 
                 # prompt user for collection to browse
                 pos = input("\nEnter the number of the collection you wish to browse: ")
@@ -356,7 +349,6 @@ def account(name, pwd):
 
         # create flash card
         elif account_input == "2":
-            # redirect to card creation
             create_card(user)
 
         # delete ALL cards
@@ -369,7 +361,6 @@ def account(name, pwd):
                 print("Cards deleted!")
                 user.delete()
 
-            # do nothing
             elif delete.lower() == "n":
                 print("Cards will not be deleted.")
                 continue
@@ -377,11 +368,9 @@ def account(name, pwd):
             else:
                 print("Invalid entry. Returning to account.")
 
-        # logoff user
+        # ave cards and logoff user
         elif account_input == "4":
-            # first, save data to hdd
             user.save_cards()
-            # return to previous menu
             break
 
         # help menu/invalid entry
@@ -404,17 +393,15 @@ def create_account():
                              "\n3. Help options"
                              "\n-> ")
 
-        # display flash card
         if create_input == "1":
 
             # prompt user for user name and password
             while True:
-                # get user name
                 user_name = input("\nEnter your new user name: ")
+
                 # check if credential file exists
                 cred_file = Path(user_name + ".txt")
                 if cred_file.is_file():
-                    # print error message
                     print("Error! That user name already exists. Please enter a new choice.")
                     exit_create = input("Or type Q to return to the previous screen: ")
 
@@ -429,9 +416,6 @@ def create_account():
                 else:
                     user_pwd = input("Please enter a new password: ")
 
-                    # create new user object with input
-                    user = User(user_name, user_pwd)
-
                     # print success notification
                     print("\nAccount creation successful!")
                     input("Logging into your account. Press any key to continue...")
@@ -440,8 +424,6 @@ def create_account():
                     account(user_name, user_pwd)
 
                 # exit function
-                # user will only reach this point after successfully creating a new account,
-                # logging in, then logging out
                 return
 
         # return to previous screen

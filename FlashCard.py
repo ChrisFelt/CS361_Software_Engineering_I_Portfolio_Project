@@ -42,6 +42,14 @@ class User:
             with open(name + ".txt", 'w') as file:
                 file.write(json.dumps(self._cred))
 
+    def valid_index(self, pos):
+        """check if the given index falls within the dictionary"""
+        pos = int(pos) - 1
+        if 0 <= pos < len(self._data):
+            return True
+        else:
+            return False
+
     def add_card(self, pos, front, back):
         """adds a flash card entry to given collection in user._data"""
         pos = int(pos) - 1
@@ -55,12 +63,11 @@ class User:
             self._data[list(self._data.keys())[pos]][front] = back
 
     def add_coll(self, coll):
-        # adds an empty collection to self._data
+        """"adds an empty collection to self._data"""
         self._data[coll] = {}
 
     def show_coll(self):
         """prints a numbered list of all collections"""
-
         i = 1
         # print list
         for front, back in sorted(self._data.items()):
@@ -72,15 +79,22 @@ class User:
 
             i += 1
 
-    def valid_index(self, pos):
-        """check if the given index falls within the dictionary"""
+    def show_cards(self, pos):
+        """print cards in a given collection"""
         pos = int(pos) - 1
-        if 0 <= pos < len(self._data):
-            return True
-        else:
-            return False
+        # print front and back of card in order sorted by front
+        i = 1
+        print("Cards (front || back):")
+        for front, back in sorted(self._data[list(self._data.keys())[pos]].items()):
+            print("    " + str(i) + ". " + front + "  ||  " + back)
 
-    def show_cards(self):
+            # screen break every 10 cards
+            if i % 10 == 0:
+                input("\nPress any key to continue...\n")
+
+            i += 1
+
+    def show_all(self):
         """given the index of a collection, prints a numbered list of all flash cards"""
 
         # print collection
@@ -140,7 +154,7 @@ class User:
         # print list
         for coll, data in sorted(result.items()):
             print("Collection name: " + coll)
-            print("Cards:")
+            print("Cards (front || back):")
 
             i = 1
             for front, back in sorted(result[coll].items()):
@@ -329,6 +343,12 @@ def search_cards(user):
     input("\nPress any key to return...")
 
 
+def edit_cards(user):
+    """edit/delete card option from account"""
+    print("Please select a collection: ")
+    
+
+
 def account(name, pwd):
     """account page routine"""
     # create user object with credentials
@@ -357,7 +377,7 @@ def account(name, pwd):
             else:
                 print("\nShowing a list of all of your collections and their cards: ")
                 # print list
-                user.show_cards()
+                user.show_all()
 
                 # prompt user for collection to browse
                 pos = input("\nEnter the number of the collection you wish to browse: ")

@@ -389,7 +389,7 @@ def user_name_select():
 
             # return to account creation screen
             if exit_create.lower() == "q":
-                break
+                return
 
             else:
                 continue

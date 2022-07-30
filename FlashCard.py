@@ -136,10 +136,17 @@ class User:
     def search(self, term):
         """search self._data for cards that match term"""
         # send flash card JSON to search microservice
-        socket.send_json(self._data)
+        request = {
+            "status": "run",
+            "search term": term,
+            "data": self._data
+        }
+        socket.send_json(request)
 
         # get microservice response
         response = socket.recv_json()
+
+        print(response)
 
         # check if search was successful
         if response["status"] != "done":
@@ -155,16 +162,22 @@ class User:
 
             else:
                 print("\nFound the following matches: ")
-                i = 1
+
                 # print list
-                for front, back in sorted(response.items()):
-                    print(str(i) + ". " + front + "  ||  " + back)
+                for coll, data in sorted(result.items()):
+                    print("Collection name: " + coll)
+                    print("Cards:")
 
-                    # screen break every 10 cards
-                    if i % 10 == 0:
-                        input("\nPress any key to continue...\n")
+                    i = 1
+                    for front, back in sorted(result[coll].items()):
 
-                    i += 1
+                        print("    " + str(i) + ". " + front + "  ||  " + back)
+
+                        # screen break every 10 cards
+                        if i % 10 == 0:
+                            input("\nPress any key to continue...\n")
+
+                        i += 1
 
 
 def authenticate(name, pwd):
@@ -303,6 +316,15 @@ def create_card(user):
             continue
 
 
+def search_cards(user):
+    """search card option from account"""
+    search_term = input("\nPlease enter a search phrase: ")
+
+    user.search(search_term)
+
+    input("\nPress any key to return...")
+
+
 def account(name, pwd):
     """account page routine"""
     # create user object with credentials
@@ -312,11 +334,12 @@ def account(name, pwd):
         print_divide()
         # prompt user
         account_input = input("Welcome to your FlashCard account! Please enter the number of an option below:"
-                              "\n1. View your flash cards - cycles through each card in a collection!"
+                              "\n1. View your flash cards - cycles through each card in a collection."
                               "\n2. Create new flash card - now customizable in just two steps!"
-                              "\n3. Edit/delete your flash cards"
-                              "\n4. Logoff"
-                              "\n5. Help options"
+                              "\n3. Search your cards."
+                              "\n4. Edit/delete your flash cards"
+                              "\n5. Logoff"
+                              "\n6. Help options"
                               "\n-> ")
 
         # display flash card
@@ -351,8 +374,12 @@ def account(name, pwd):
         elif account_input == "2":
             create_card(user)
 
-        # delete ALL cards
+        # search cards
         elif account_input == "3":
+            search_cards(user)
+
+        # delete ALL cards
+        elif account_input == "4":
             # confirm choice to delete
             delete = input("Delete your card(s)? Y/N: ")
 
@@ -369,7 +396,7 @@ def account(name, pwd):
                 print("Invalid entry. Returning to account.")
 
         # ave cards and logoff user
-        elif account_input == "4":
+        elif account_input == "5":
             user.save_cards()
             break
 

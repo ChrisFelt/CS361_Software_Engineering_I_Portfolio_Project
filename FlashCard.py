@@ -284,6 +284,13 @@ def login():
             continue
 
 
+# ---------------------------------------------------------------------------
+#
+# Account page functionality
+#
+# ---------------------------------------------------------------------------
+
+
 def create_card(user):
     """card creation routine: prompts user to create and add cards to collections."""
 
@@ -360,8 +367,34 @@ def create_card(user):
             continue
 
 
+def display_cards(user):
+    """display cards from edit/delete menu"""
+    # check for cards
+    if user.no_cards():
+        print("\nYou currently have no cards to view! Please make a new card from your account menu.")
+        input("Press any key to return to the previous screen...")
+
+    # show user's flash cards
+    else:
+        print("\nShowing a list of all of your collections and their cards: ")
+        user.show_all()
+
+        pos = input("\nEnter the number of the collection you wish to browse: ")
+
+        # if valid entry, browse cards for the given collection
+        if pos.isdigit() and user.valid_index(pos):
+            user.print_front(pos)
+
+        # otherwise return to account
+        else:
+            input("Invalid entry! Press any key to return to account...")
+            return
+
+        input("\nNo more cards to show. Press any key to return to account...")
+
+
 def search_cards(user):
-    """search card option from account"""
+    """search card option from edit/delete menu"""
     search_term = input("\nPlease enter a search phrase: ")
 
     user.search(search_term)
@@ -370,9 +403,91 @@ def search_cards(user):
 
 
 def edit_cards(user):
-    """edit/delete card option from account"""
-    print("Please select a collection: ")
-    
+    """edit card option from edit/delete menu"""
+    print("\nSelect a collection:")
+    user.show_coll()
+
+    coll = input("\nEnter selection: ")
+
+    if user.valid_index(coll):
+        print("\nSelect card to edit:")
+        user.show_cards(coll)
+
+        key = input("\nEnter selection: ")
+        front = input("Enter front: ")
+        back = input("Enter back: ")
+
+        confirm = input("You entered front: " + front + " || back: " + back +
+                        ". Keep edits? Y/N: ")
+
+        if confirm.lower() == "y":
+            user.edit_card(coll, key, front, back)
+
+        else:
+            "Edit will not be saved."
+
+    else:
+        print("Invalid entry!")
+
+
+def delete_one(user):
+    """delete one card from edit/delete menu"""
+    print("\nSelect a collection:")
+    user.show_coll()
+
+    coll = input("\nEnter selection: ")
+
+    if user.valid_index(coll):
+        print("\nSelect card to delete:")
+        user.show_cards(coll)
+
+        key = input("\nEnter selection: ")
+        confirm = input("Delete this card? Y/N: ")
+
+        if confirm.lower() == "y":
+            user.delete_card(coll, key)
+
+        else:
+            "No changes made."
+
+    else:
+        print("Invalid entry!")
+
+
+def delete_all(user):
+    """delete all cards from edit/delete menu"""
+    delete = input("Delete your card(s)? Y/N: ")
+
+    # delete all cards in user object and hdd flash card file associated with user credentials
+    if delete.lower() == "y":
+        print("Cards deleted!")
+        user.delete_all()
+
+    elif delete.lower() == "n":
+        print("Cards will not be deleted.")
+
+    else:
+        print("Invalid entry. Returning to account.")
+
+
+def edit_delete_menu(user):
+    """edit/delete menu selection from account"""
+    edit_input = input("\nSelect an option below:"
+                       "\n1. Edit a card."
+                       "\n2. Delete a card."
+                       "\n3. Delete ALL cards."
+                       "\n-> ")
+    # edit a card
+    if edit_input == "1":
+        edit_cards(user)
+
+    # delete one card
+    elif edit_input == "2":
+        delete_one(user)
+
+    # delete ALL
+    elif edit_input == "3":
+        delete_all(user)
 
 
 def account(name, pwd):
@@ -394,31 +509,7 @@ def account(name, pwd):
 
         # display flash card
         if account_input == "1":
-            # if user has no saved flash cards, notify and return to menu
-            if user.no_cards():
-                print("\nYou currently have no cards to view! Please make a new card from your account menu.")
-                input("Press any key to return to the previous screen...")
-
-            # show user's flash cards
-            else:
-                print("\nShowing a list of all of your collections and their cards: ")
-                # print list
-                user.show_all()
-
-                # prompt user for collection to browse
-                pos = input("\nEnter the number of the collection you wish to browse: ")
-
-                # if valid entry, browse cards for the given collection
-                if pos.isdigit() and user.valid_index(pos):
-                    user.print_front(pos)
-
-                # otherwise return to account
-                else:
-                    input("Invalid entry! Press any key to return to account...")
-                    continue
-
-                # notify user end of list has been reached
-                input("\nNo more cards to show. Press any key to return to account...")
+            display_cards(user)
 
         # create flash card
         elif account_input == "2":
@@ -430,70 +521,7 @@ def account(name, pwd):
 
         # edit/delete
         elif account_input == "4":
-            edit_input = input("\nSelect an option below:"
-                               "\n1. Edit a card."
-                               "\n2. Delete a card."
-                               "\n3. Delete ALL cards."
-                               "\n-> ")
-
-            if edit_input == "1":
-                print("\nSelect a collection:")
-                user.show_coll()
-
-                coll = input("\nEnter selection: ")
-
-                if user.valid_index(coll):
-                    print("\nSelect card to edit:")
-                    user.show_cards(coll)
-
-                    key = input("\nEnter selection: ")
-                    front = input("Enter front: ")
-                    back = input("Enter back: ")
-
-                    confirm = input("You entered front: " + front + " || back: " + back +
-                                    ". Keep edits? Y/N: ")
-
-                    if confirm.lower() == "y":
-                        user.edit_card(coll, key, front, back)
-
-                    else:
-                        "Edit will not be saved."
-
-            # delete one card
-            if edit_input == "2":
-                print("\nSelect a collection:")
-                user.show_coll()
-
-                coll = input("\nEnter selection: ")
-
-                if user.valid_index(coll):
-                    print("\nSelect card to delete:")
-                    user.show_cards(coll)
-
-                    key = input("\nEnter selection: ")
-                    confirm = input("Delete this card? Y/N: ")
-
-                    if confirm.lower() == "y":
-                        user.delete_card(coll, key)
-
-                    else:
-                        "No changes made."
-
-            # delete ALL
-            if edit_input == "3":
-                delete = input("Delete your card(s)? Y/N: ")
-
-                # delete all cards in user object and hdd flash card file associated with user credentials
-                if delete.lower() == "y":
-                    print("Cards deleted!")
-                    user.delete_all()
-
-                elif delete.lower() == "n":
-                    print("Cards will not be deleted.")
-                    continue
-
-                else:
-                    print("Invalid entry. Returning to account.")
+            edit_delete_menu(user)
 
         # ave cards and logoff user
         elif account_input == "5":

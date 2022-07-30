@@ -29,8 +29,9 @@ def data_open(name):
 
 class User:
     """Represents a user, with credentials and flash cards."""
-    # initialize data members
+
     def __init__(self, name, pwd):
+        """initialize data members"""
         # get user data
         self._data = data_open(name)
 

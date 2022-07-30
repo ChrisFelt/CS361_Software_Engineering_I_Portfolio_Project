@@ -224,6 +224,26 @@ class User:
                 self.print_result(result)
 
 
+# ---------------------------------------------------------------------------
+#
+# General use functionality
+#
+# ---------------------------------------------------------------------------
+
+
+def print_divide():
+    """prints a screen divide"""
+    print("\n---------------------------------------------"
+          "\n")
+
+
+# ---------------------------------------------------------------------------
+#
+# Login page functionality
+#
+# ---------------------------------------------------------------------------
+
+
 def authenticate(name, pwd):
     """checks user name/pwd against existing credentials"""
     # check if user credential txt file exists
@@ -238,12 +258,6 @@ def authenticate(name, pwd):
             return True
 
     return False
-
-
-def print_divide():
-    """prints a screen divide"""
-    print("\n---------------------------------------------"
-          "\n")
 
 
 def login():
@@ -291,6 +305,64 @@ def login():
 # ---------------------------------------------------------------------------
 
 
+def add_coll(user):
+    """add collection for create card"""
+    coll_name = input("\nEnter collection name: ")
+
+    # confirm collection
+    print("\nYou have entered: " + coll_name)
+    finalize = input("\nSave this collection? Y/N: ")
+
+    # save collection
+    if finalize.lower() == "y":
+        user.add_coll(coll_name)
+        input("Collection added! Press any key to return...")
+
+    # do nothing
+    elif finalize.lower() == "n":
+        print("Collection not saved.")
+        return
+
+
+def add_card(user):
+    """add a new card to a collection for create card"""
+    if user.no_cards():
+        print("\nYou have no collections! Make a collection first.")
+        return
+
+    else:
+        print("\nYour collections: ")
+        user.show_coll()
+        pos = input("\nSelect a collection to add the card to: ")
+
+        # if user entry is valid, proceed to card creation
+        if pos.isdigit() and user.valid_index(pos):
+
+            # prompt user for front and back
+            front = input("\nEdit front of card: ")
+            back = input("Edit back of card: ")
+
+            # confirm card
+            print("\nYou have entered front: " + front + "\nAnd back: " + back)
+            finalize = input("\nSave this card? Y/N: ")
+
+            # save card
+            if finalize.lower() == "y":
+                user.add_card(pos, front, back)
+                print("Card saved!")
+
+            elif finalize.lower() == "n":
+                print("Card not saved.")
+                return
+
+            else:
+                input("Invalid entry. Press any key to return to account...")
+
+        # invalid pos input
+        else:
+            input("Invalid entry. Press any key to return to account...")
+
+
 def create_card(user):
     """card creation routine: prompts user to create and add cards to collections."""
 
@@ -301,62 +373,13 @@ def create_card(user):
                            "\n2. Add card to collection"
                            "\n3. Return to previous screen"
                            "\n-> ")
-
+        # new collection
         if card_input == "1":
-            # get collection name and add an empty collection key to the user's collections
-            coll_name = input("\nEnter collection name: ")
+            add_coll(user)
 
-            # confirm collection
-            print("\nYou have entered: " + coll_name)
-            finalize = input("\nSave this collection? Y/N: ")
-
-            # save collection
-            if finalize.lower() == "y":
-                user.add_coll(coll_name)
-                input("Collection added! Press any key to return...")
-
-            # do nothing
-            elif finalize.lower() == "n":
-                print("Collection not saved.")
-                continue
-
+        # new card
         elif card_input == "2":
-            # if user has no collections, raise error
-            if user.no_cards():
-                print("\nYou have no collections! Make a collection first.")
-                continue
-
-            else:
-                print("\nYour collections: ")
-                user.show_coll()
-                pos = input("\nSelect a collection to add the card to: ")
-
-                # if user entry is valid, proceed to card creation
-                if pos.isdigit() and user.valid_index(pos):
-
-                    # prompt user for front and back
-                    front = input("\nPlease enter text for front of card: ")
-                    back = input("Please enter text for back of card: ")
-
-                    # confirm card
-                    print("\nYou have entered front: " + front + "\nAnd back: " + back)
-                    finalize = input("\nSave this card? Y/N: ")
-
-                    # save card
-                    if finalize.lower() == "y":
-                        user.add_card(pos, front, back)
-                        print("Card saved!")
-
-                    elif finalize.lower() == "n":
-                        print("Card not saved.")
-                        continue
-
-                    else:
-                        input("Invalid entry. Press any key to return to account...")
-
-                # invalid pos input
-                else:
-                    input("Invalid entry. Press any key to return to account...")
+            add_card(user)
 
         # return to previous screen
         elif card_input == "3":
@@ -409,6 +432,7 @@ def edit_cards(user):
 
     coll = input("\nEnter selection: ")
 
+    # get card to edit
     if user.valid_index(coll):
         print("\nSelect card to edit:")
         user.show_cards(coll)
@@ -418,7 +442,7 @@ def edit_cards(user):
         back = input("Enter back: ")
 
         confirm = input("You entered front: " + front + " || back: " + back +
-                        ". Keep edits? Y/N: ")
+                        ". \nKeep edits? Y/N: ")
 
         if confirm.lower() == "y":
             user.edit_card(coll, key, front, back)
@@ -437,6 +461,7 @@ def delete_one(user):
 
     coll = input("\nEnter selection: ")
 
+    # get card to delete
     if user.valid_index(coll):
         print("\nSelect card to delete:")
         user.show_cards(coll)
@@ -523,7 +548,7 @@ def account(name, pwd):
         elif account_input == "4":
             edit_delete_menu(user)
 
-        # ave cards and logoff user
+        # save cards and logoff
         elif account_input == "5":
             user.save_cards()
             break
@@ -535,6 +560,42 @@ def account(name, pwd):
             print("Any other key entry will bring you to the help menu.")
             input("To return to your account page, press any key...")
             continue
+
+
+# ---------------------------------------------------------------------------
+#
+# Create new account page functionality
+#
+# ---------------------------------------------------------------------------
+
+
+def user_name_select():
+    """user name and password selection for create account"""
+    while True:
+        user_name = input("\nEnter your new user name: ")
+
+        # check if credential file exists
+        cred_file = Path(user_name + ".txt")
+        if cred_file.is_file():
+            print("Error! That user name already exists. Please enter a new choice.")
+            exit_create = input("Or type Q to return to the previous screen: ")
+
+            # return to account creation screen
+            if exit_create.lower() == "q":
+                break
+
+            else:
+                continue
+
+        else:
+            user_pwd = input("Please enter a new password: ")
+
+            print("\nAccount creation successful!")
+            input("Logging into your account. Press any key to continue...")
+
+            # log user into account
+            account(user_name, user_pwd)
+        return
 
 
 def create_account():
@@ -549,37 +610,7 @@ def create_account():
                              "\n-> ")
 
         if create_input == "1":
-
-            # prompt user for user name and password
-            while True:
-                user_name = input("\nEnter your new user name: ")
-
-                # check if credential file exists
-                cred_file = Path(user_name + ".txt")
-                if cred_file.is_file():
-                    print("Error! That user name already exists. Please enter a new choice.")
-                    exit_create = input("Or type Q to return to the previous screen: ")
-
-                    # return to account creation screen
-                    if exit_create.lower() == "q":
-                        break
-
-                    else:
-                        continue
-
-                # get user password
-                else:
-                    user_pwd = input("Please enter a new password: ")
-
-                    # print success notification
-                    print("\nAccount creation successful!")
-                    input("Logging into your account. Press any key to continue...")
-
-                    # log user into account
-                    account(user_name, user_pwd)
-
-                # exit function
-                return
+            user_name_select()
 
         # return to previous screen
         elif create_input == "2":

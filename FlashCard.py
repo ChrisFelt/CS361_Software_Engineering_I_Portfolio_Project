@@ -70,7 +70,7 @@ class User:
         """prints a numbered list of all collections"""
         i = 1
         # print list
-        for front, back in sorted(self._data.items()):
+        for front, back in self._data.items():
             print(str(i) + ". " + front)
 
             # screen break every 10 cards
@@ -85,7 +85,7 @@ class User:
         # print front and back of card in order sorted by front
         i = 1
         print("Cards (front || back):")
-        for front, back in sorted(self._data[list(self._data.keys())[pos]].items()):
+        for front, back in self._data[list(self._data.keys())[pos]].items():
             print("    " + str(i) + ". " + front + "  ||  " + back)
 
             # screen break every 10 cards
@@ -103,7 +103,7 @@ class User:
             i = 1
             # print list
             # list(dict_name.keys())[0] gets key at position 0
-            for front, back in sorted(self._data[list(self._data.keys())[j]].items()):
+            for front, back in self._data[list(self._data.keys())[j]].items():
                 print("    " + front)
 
                 # screen break every 10 cards
@@ -126,18 +126,36 @@ class User:
 
             i += 1
 
-    def edit_card(self, coll, key, value):
+    def edit_card(self, coll, key, key_str, value):
         """edit a card in the given collection at the given position"""
+
+        # retype indices
+        coll = int(coll) - 1
+        key = int(key) - 1
+
         coll_list = list(self._data)
         card_list = list(self._data[coll_list[coll]])
 
-        # set new value
-        self._data[coll_list[coll]][card_list[key]] = value
+        # swap old key with new, then update value
+        self._data[coll_list[coll]][key_str] = self._data[coll_list[coll]].pop(card_list[key])
+        self._data[coll_list[coll]][key_str] = value
 
     def save_cards(self):
         """saves self.data contents as a json to same directory"""
         with open(self._name + '.json', 'w') as out_file:
             out_file.write(json.dumps(self._data))
+
+    def delete_card(self, coll, key):
+        """delete a card in the given collection at the given position"""
+
+        # retype indices
+        coll = int(coll) - 1
+        key = int(key) - 1
+
+        coll_list = list(self._data)
+        card_list = list(self._data[coll_list[coll]])
+
+        del self._data[coll_list[coll]][card_list[key]]
 
     def delete_all(self):
         """deletes cards from self._data and from hard drive"""
@@ -160,12 +178,12 @@ class User:
         print("\nFound the following matches: ")
 
         # print list
-        for coll, data in sorted(result.items()):
+        for coll, data in result.items():
             print("Collection name: " + coll)
             print("Cards (front || back):")
 
             i = 1
-            for front, back in sorted(result[coll].items()):
+            for front, back in result[coll].items():
 
                 print("    " + str(i) + ". " + front + "  ||  " + back)
 
@@ -410,22 +428,72 @@ def account(name, pwd):
         elif account_input == "3":
             search_cards(user)
 
-        # delete ALL cards
+        # edit/delete
         elif account_input == "4":
-            # confirm choice to delete
-            delete = input("Delete your card(s)? Y/N: ")
+            edit_input = input("\nSelect an option below:"
+                               "\n1. Edit a card."
+                               "\n2. Delete a card."
+                               "\n3. Delete ALL cards."
+                               "\n-> ")
 
-            # delete all cards in user object and hdd flash card file associated with user credentials
-            if delete.lower() == "y":
-                print("Cards deleted!")
-                user.delete_all()
+            if edit_input == "1":
+                print("\nSelect a collection:")
+                user.show_coll()
 
-            elif delete.lower() == "n":
-                print("Cards will not be deleted.")
-                continue
+                coll = input("\nEnter selection: ")
 
-            else:
-                print("Invalid entry. Returning to account.")
+                if user.valid_index(coll):
+                    print("\nSelect card to edit:")
+                    user.show_cards(coll)
+
+                    key = input("\nEnter selection: ")
+                    front = input("Enter front: ")
+                    back = input("Enter back: ")
+
+                    confirm = input("You entered front: " + front + " || back: " + back +
+                                    ". Keep edits? Y/N: ")
+
+                    if confirm.lower() == "y":
+                        user.edit_card(coll, key, front, back)
+
+                    else:
+                        "Edit will not be saved."
+
+            # delete one card
+            if edit_input == "2":
+                print("\nSelect a collection:")
+                user.show_coll()
+
+                coll = input("\nEnter selection: ")
+
+                if user.valid_index(coll):
+                    print("\nSelect card to delete:")
+                    user.show_cards(coll)
+
+                    key = input("\nEnter selection: ")
+                    confirm = input("Delete this card? Y/N: ")
+
+                    if confirm.lower() == "y":
+                        user.delete_card(coll, key)
+
+                    else:
+                        "No changes made."
+
+            # delete ALL
+            if edit_input == "3":
+                delete = input("Delete your card(s)? Y/N: ")
+
+                # delete all cards in user object and hdd flash card file associated with user credentials
+                if delete.lower() == "y":
+                    print("Cards deleted!")
+                    user.delete_all()
+
+                elif delete.lower() == "n":
+                    print("Cards will not be deleted.")
+                    continue
+
+                else:
+                    print("Invalid entry. Returning to account.")
 
         # ave cards and logoff user
         elif account_input == "5":

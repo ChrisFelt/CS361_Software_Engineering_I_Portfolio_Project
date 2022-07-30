@@ -83,7 +83,7 @@ class User:
             i += 1
 
     def show_cards(self, pos):
-        """print cards in a given collection"""
+        """shows cards in a given collection"""
         pos = int(pos) - 1
         # print front and back of card in order sorted by front
         i = 1
@@ -114,7 +114,7 @@ class User:
 
                 i += 1
 
-    def print_front(self, pos):
+    def study_cards(self, pos):
         """given the index of a collection, prints flash cards in self._data in front -> back order"""
         pos = int(pos) - 1
 

@@ -182,8 +182,8 @@ def create_card(user):
             continue
 
 
-def display_cards_browse(user):
-    """card browsing for display cards"""
+def display_cards_study(user):
+    """card studying function for display cards"""
     print("\nShowing a list of all of your collections and their cards: ")
     user.show_all()
 
@@ -191,7 +191,7 @@ def display_cards_browse(user):
 
     # if valid entry, browse cards for the given collection
     if pos.isdigit() and user.valid_index(pos):
-        user.print_front(pos)
+        user.study_cards(pos)
 
     # otherwise return to account
     else:
@@ -208,7 +208,7 @@ def display_cards(user):
 
     # show user's flash cards
     else:
-        display_cards_browse(user)
+        display_cards_study(user)
 
         input("\nNo more cards to show. Press any key to return to account...")
 
@@ -216,9 +216,8 @@ def display_cards(user):
 def search_cards(user):
     """search card option from edit/delete menu"""
     search_term = input("\nPlease enter a search phrase: ")
-
+    
     user.search(search_term)
-
     input("\nPress any key to return...")
 
 

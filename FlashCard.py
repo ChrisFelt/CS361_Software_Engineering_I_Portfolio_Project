@@ -133,6 +133,26 @@ class User:
         else:
             return False
 
+    def print_result(self, result):
+        """print the results of a search"""
+        print("\nFound the following matches: ")
+
+        # print list
+        for coll, data in sorted(result.items()):
+            print("Collection name: " + coll)
+            print("Cards:")
+
+            i = 1
+            for front, back in sorted(result[coll].items()):
+
+                print("    " + str(i) + ". " + front + "  ||  " + back)
+
+                # screen break every 10 cards
+                if i % 10 == 0:
+                    input("\nPress any key to continue...\n")
+
+                i += 1
+
     def search(self, term):
         """search self._data for cards that match term"""
         # send flash card JSON to search microservice
@@ -161,23 +181,7 @@ class User:
                 print("\nNo matches found for " + term + ".")
 
             else:
-                print("\nFound the following matches: ")
-
-                # print list
-                for coll, data in sorted(result.items()):
-                    print("Collection name: " + coll)
-                    print("Cards:")
-
-                    i = 1
-                    for front, back in sorted(result[coll].items()):
-
-                        print("    " + str(i) + ". " + front + "  ||  " + back)
-
-                        # screen break every 10 cards
-                        if i % 10 == 0:
-                            input("\nPress any key to continue...\n")
-
-                        i += 1
+                self.print_result(result)
 
 
 def authenticate(name, pwd):

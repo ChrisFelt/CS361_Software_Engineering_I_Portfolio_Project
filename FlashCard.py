@@ -126,12 +126,20 @@ class User:
 
             i += 1
 
+    def edit_card(self, coll, key, value):
+        """edit a card in the given collection at the given position"""
+        coll_list = list(self._data)
+        card_list = list(self._data[coll_list[coll]])
+
+        # set new value
+        self._data[coll_list[coll]][card_list[key]] = value
+
     def save_cards(self):
         """saves self.data contents as a json to same directory"""
         with open(self._name + '.json', 'w') as out_file:
             out_file.write(json.dumps(self._data))
 
-    def delete(self):
+    def delete_all(self):
         """deletes cards from self._data and from hard drive"""
         # delete data
         self._data = {}
@@ -410,7 +418,7 @@ def account(name, pwd):
             # delete all cards in user object and hdd flash card file associated with user credentials
             if delete.lower() == "y":
                 print("Cards deleted!")
-                user.delete()
+                user.delete_all()
 
             elif delete.lower() == "n":
                 print("Cards will not be deleted.")

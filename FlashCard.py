@@ -157,7 +157,7 @@ def add_card(user):
 
 def create_card(user):
     """card creation routine: prompts user to create and add cards to collections."""
-
+    print_divide()
     # create flash card routine
     while True:
         card_input = input("\nWelcome to card creation! Please select an option: "
@@ -226,6 +226,7 @@ def edit_cards_confirmation(user, coll):
     print("\nSelect card to edit:")
     user.show_cards(coll)
 
+    # get edit inputs for edit_card()
     key = input("\nEnter selection: ")
     front = input("Enter front: ")
     back = input("Enter back: ")
@@ -263,6 +264,7 @@ def delete_one_confirmation(user, coll):
     key = input("\nEnter selection: ")
     confirm = input("Delete this card? Y/N: ")
 
+    # delete card
     if confirm.lower() == "y":
         user.delete_card(coll, key)
 
@@ -328,7 +330,6 @@ def account(name, pwd):
 
     while True:
         print_divide()
-        # prompt user
         account_input = input("Welcome to your FlashCard account! Please enter the number of an option below:"
                               "\n1. View your flash cards - cycles through each card in a collection."
                               "\n2. Create new flash card - now customizable in just two steps!"
@@ -393,6 +394,7 @@ def user_name_select():
             else:
                 continue
 
+        # create new credentials
         else:
             user_pwd = input("Please enter a new password: ")
 

@@ -84,9 +84,9 @@ class User:
         pos = int(pos) - 1
         # print front and back of card in order sorted by front
         i = 1
-        print("Cards (front || back):")
+        print("Cards (front | back):")
         for front, back in self._data[list(self._data.keys())[pos]].items():
-            print("    " + str(i) + ". " + front + "  ||  " + back)
+            print("    " + str(i) + ". " + front + "  |  " + back)
 
             # screen break every 10 cards
             if i % 10 == 0:
@@ -180,12 +180,12 @@ class User:
         # print list
         for coll, data in result.items():
             print("Collection name: " + coll)
-            print("Cards (front || back):")
+            print("Cards (front | back):")
 
             i = 1
             for front, back in result[coll].items():
 
-                print("    " + str(i) + ". " + front + "  ||  " + back)
+                print("    " + str(i) + ". " + front + "  |  " + back)
 
                 # screen break every 10 cards
                 if i % 10 == 0:
@@ -193,9 +193,8 @@ class User:
 
                 i += 1
 
-    def search(self, term):
-        """search self._data for cards that match term"""
-        # send flash card JSON to search microservice
+    def search_comms(self, term):
+        """handles communication with the search microservice"""
         request = {
             "status": "run",
             "search term": term,
@@ -205,8 +204,12 @@ class User:
 
         # get microservice response
         response = socket.recv_json()
+        return response
 
-        print(response)
+    def search(self, term):
+        """search self._data for cards that match term"""
+        # send flash card JSON to search microservice
+        response = self.search_comms(term)
 
         # check if search was successful
         if response["status"] != "done":
@@ -260,6 +263,21 @@ def authenticate(name, pwd):
     return False
 
 
+def credential_input():
+    """receives login input and logs user in"""
+    name = input("\nUsername -> ")
+    pwd = input("Password -> ")
+
+    # authenticate input and access account
+    if authenticate(name, pwd) is True:
+        print("\nSuccess! Opening your account, " + name + ".")
+        account(name, pwd)
+
+    else:
+        print("\nLogin failed. Please enter a valid Username and password.")
+        return
+
+
 def login():
     """login screen routine"""
     while True:
@@ -272,17 +290,7 @@ def login():
 
         # attempt login
         if login_input == "1":
-            name = input("\nUsername -> ")
-            pwd = input("Password -> ")
-
-            # authenticate input and access account
-            if authenticate(name, pwd) is True:
-                print("\nSuccess! Opening your account, " + name + ".")
-                account(name, pwd)
-
-            else:
-                print("\nLogin failed. Please enter a valid Username and password.")
-                continue
+            credential_input()
 
             # if return from successful account login, exit login loop
             break
@@ -324,6 +332,28 @@ def add_coll(user):
         return
 
 
+def add_card_confirmation(user, pos):
+    """gets and confirms card data for add card"""
+    front = input("\nEdit front of card: ")
+    back = input("Edit back of card: ")
+
+    # confirm card
+    print("\nYou have entered front: " + front + "\nAnd back: " + back)
+    finalize = input("\nSave this card? Y/N: ")
+
+    # save card
+    if finalize.lower() == "y":
+        user.add_card(pos, front, back)
+        print("Card saved!")
+
+    elif finalize.lower() == "n":
+        print("Card not saved.")
+        return
+
+    else:
+        input("Invalid entry. Press any key to return to account...")
+
+
 def add_card(user):
     """add a new card to a collection for create card"""
     if user.no_cards():
@@ -337,26 +367,7 @@ def add_card(user):
 
         # if user entry is valid, proceed to card creation
         if pos.isdigit() and user.valid_index(pos):
-
-            # prompt user for front and back
-            front = input("\nEdit front of card: ")
-            back = input("Edit back of card: ")
-
-            # confirm card
-            print("\nYou have entered front: " + front + "\nAnd back: " + back)
-            finalize = input("\nSave this card? Y/N: ")
-
-            # save card
-            if finalize.lower() == "y":
-                user.add_card(pos, front, back)
-                print("Card saved!")
-
-            elif finalize.lower() == "n":
-                print("Card not saved.")
-                return
-
-            else:
-                input("Invalid entry. Press any key to return to account...")
+            add_card_confirmation(user, pos)
 
         # invalid pos input
         else:
@@ -390,6 +401,23 @@ def create_card(user):
             continue
 
 
+def display_cards_browse(user):
+    """card browsing for display cards"""
+    print("\nShowing a list of all of your collections and their cards: ")
+    user.show_all()
+
+    pos = input("\nEnter the number of the collection you wish to browse: ")
+
+    # if valid entry, browse cards for the given collection
+    if pos.isdigit() and user.valid_index(pos):
+        user.print_front(pos)
+
+    # otherwise return to account
+    else:
+        input("Invalid entry! Press any key to return to account...")
+        return
+
+
 def display_cards(user):
     """display cards from edit/delete menu"""
     # check for cards
@@ -399,19 +427,7 @@ def display_cards(user):
 
     # show user's flash cards
     else:
-        print("\nShowing a list of all of your collections and their cards: ")
-        user.show_all()
-
-        pos = input("\nEnter the number of the collection you wish to browse: ")
-
-        # if valid entry, browse cards for the given collection
-        if pos.isdigit() and user.valid_index(pos):
-            user.print_front(pos)
-
-        # otherwise return to account
-        else:
-            input("Invalid entry! Press any key to return to account...")
-            return
+        display_cards_browse(user)
 
         input("\nNo more cards to show. Press any key to return to account...")
 
@@ -425,6 +441,25 @@ def search_cards(user):
     input("\nPress any key to return...")
 
 
+def edit_cards_confirmation(user, coll):
+    """selects and confirms edits for a card in a collection for edit cards"""
+    print("\nSelect card to edit:")
+    user.show_cards(coll)
+
+    key = input("\nEnter selection: ")
+    front = input("Enter front: ")
+    back = input("Enter back: ")
+
+    confirm = input("You entered front: " + front + " | back: " + back +
+                    ". \nKeep edits? Y/N: ")
+
+    if confirm.lower() == "y":
+        user.edit_card(coll, key, front, back)
+
+    else:
+        "Edit will not be saved."
+
+
 def edit_cards(user):
     """edit card option from edit/delete menu"""
     print("\nSelect a collection:")
@@ -434,24 +469,25 @@ def edit_cards(user):
 
     # get card to edit
     if user.valid_index(coll):
-        print("\nSelect card to edit:")
-        user.show_cards(coll)
-
-        key = input("\nEnter selection: ")
-        front = input("Enter front: ")
-        back = input("Enter back: ")
-
-        confirm = input("You entered front: " + front + " || back: " + back +
-                        ". \nKeep edits? Y/N: ")
-
-        if confirm.lower() == "y":
-            user.edit_card(coll, key, front, back)
-
-        else:
-            "Edit will not be saved."
+        edit_cards_confirmation(user, coll)
 
     else:
         print("Invalid entry!")
+
+
+def delete_one_confirmation(user, coll):
+    """confirms and deletes one card for delete one"""
+    print("\nSelect card to delete:")
+    user.show_cards(coll)
+
+    key = input("\nEnter selection: ")
+    confirm = input("Delete this card? Y/N: ")
+
+    if confirm.lower() == "y":
+        user.delete_card(coll, key)
+
+    else:
+        "No changes made."
 
 
 def delete_one(user):
@@ -463,17 +499,7 @@ def delete_one(user):
 
     # get card to delete
     if user.valid_index(coll):
-        print("\nSelect card to delete:")
-        user.show_cards(coll)
-
-        key = input("\nEnter selection: ")
-        confirm = input("Delete this card? Y/N: ")
-
-        if confirm.lower() == "y":
-            user.delete_card(coll, key)
-
-        else:
-            "No changes made."
+        delete_one_confirmation(user, coll)
 
     else:
         print("Invalid entry!")

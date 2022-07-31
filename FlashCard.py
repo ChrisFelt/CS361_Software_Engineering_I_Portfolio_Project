@@ -14,7 +14,6 @@ from FlashCardUser import User
 #
 # ---------------------------------------------------------------------------
 
-
 def print_divide():
     """prints a screen divide"""
     print("\n---------------------------------------------"
@@ -26,7 +25,6 @@ def print_divide():
 # Login page functionality
 #
 # ---------------------------------------------------------------------------
-
 
 def authenticate(name, pwd):
     """checks user name/pwd against existing credentials"""
@@ -92,7 +90,6 @@ def login():
 # Account page functionality
 #
 # ---------------------------------------------------------------------------
-
 
 def add_coll(user):
     """add collection for create card"""
@@ -374,7 +371,6 @@ def account(name, pwd):
 # Create new account page functionality
 #
 # ---------------------------------------------------------------------------
-
 
 def user_name_select():
     """user name and password selection for create account"""

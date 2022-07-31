@@ -86,7 +86,6 @@ if __name__ == '__main__':
         # check status
         status = request["status"]
 
-        # randomize data if status is run
         if status == "run":
             print("\nReceived request from client, generating randomized RGB values...")
 

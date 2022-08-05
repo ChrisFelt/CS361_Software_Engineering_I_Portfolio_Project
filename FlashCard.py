@@ -415,6 +415,7 @@ def create_account():
 
         if create_input == "1":
             user_name_select()
+            return
 
         # return to previous screen
         elif create_input == "2":

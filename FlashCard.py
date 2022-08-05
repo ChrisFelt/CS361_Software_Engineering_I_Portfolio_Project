@@ -329,9 +329,9 @@ def account(name, pwd):
         print_divide()
         account_input = input("Welcome to your FlashCard account! Please enter the number of an option below:"
                               "\n1. View your flash cards - cycles through each card in a collection."
-                              "\n2. Create new flash card - now customizable in just two steps!"
-                              "\n3. Search your cards."
-                              "\n4. Edit/delete your flash cards"
+                              "\n2. Create new flash card or collection - create and customize in just two steps!"
+                              "\n3. Search your cards"
+                              "\n4. Edit/delete your flash cards - new!"
                               "\n5. Logoff"
                               "\n6. Help options"
                               "\n-> ")

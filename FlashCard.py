@@ -158,7 +158,7 @@ def create_card(user):
     # create flash card routine
     while True:
         card_input = input("\nWelcome to card creation! Please select an option: "
-                           "\n1. Create new collection"
+                           "\n1. Create new collection - start here!"
                            "\n2. Add card to collection"
                            "\n3. Return to previous screen"
                            "\n-> ")
@@ -303,9 +303,9 @@ def delete_all(user):
 def edit_delete_menu(user):
     """edit/delete menu selection from account"""
     edit_input = input("\nSelect an option below:"
-                       "\n1. Edit a card."
-                       "\n2. Delete a card."
-                       "\n3. Delete ALL cards."
+                       "\n1. Edit a card"
+                       "\n2. Delete a card"
+                       "\n3. Delete ALL cards"
                        "\n-> ")
     # edit a card
     if edit_input == "1":

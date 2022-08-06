@@ -121,7 +121,7 @@ class User:
 
         # print front and back of card in order sorted by front
         i = 1
-        for front, back in sorted(self._data[list(self._data.keys())[pos]].items()):
+        for front, back in self._data[list(self._data.keys())[pos]].items():
             print("\nShowing flash card #" + str(i) + ".")
             print("Front: " + front)
             input("----------------")
